@@ -1,0 +1,49 @@
+version: '3'
+
+networks:
+  mynetwork:
+    driver: bridge
+
+services:
+  nginx:
+    build: ./requirements/nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./requirements/nginx/conf.d:/etc/nginx/conf.d
+      - ./certs:/etc/nginx/certs:ro
+    depends_on:
+      - wordpress
+    networks:
+      - mynetwork
+
+  wordpress:
+    build: ./requirements/wordpress
+    environment:
+      WORDPRESS_DB_HOST: mariadb
+      WORDPRESS_DB_USER: ${MYSQL_USER}
+      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
+      WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
+    volumes:
+      - wordpress_data:/var/www/html
+    depends_on:
+      - mariadb
+    networks:
+      - mynetwork
+
+  mariadb:
+    build: ./requirements/mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - mynetwork
+
+volumes:
+  wordpress_data:
+  mariadb_data:

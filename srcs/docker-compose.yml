@@ -4,6 +4,10 @@ networks:
   mynetwork:
     driver: bridge
 
+volumes:
+  wordpress_data:
+  mariadb_data:
+
 services:
   nginx:
     build: ./requirements/nginx
@@ -43,7 +47,3 @@ services:
       - mariadb_data:/var/lib/mysql
     networks:
       - mynetwork
-
-volumes:
-  wordpress_data:
-  mariadb_data:

@@ -11,9 +11,6 @@ RUN mkdir -p /etc/nginx/certs && \
     -out /etc/nginx/certs/localhost.crt \
     -subj "/C=US/ST=Denial/L=Springfield/O=Dis/CN=bena.42.fr"
 
-# 사용자 정의 NGINX 설정 파일 복사
-COPY ./default.conf /etc/nginx/conf.d/default.conf
-
 # 로그 스트림 설정
 RUN ln -sf /dev/stdout /var/log/nginx/access.log \
     && ln -sf /dev/stderr /var/log/nginx/error.log

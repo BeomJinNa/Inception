@@ -3,7 +3,7 @@ FROM debian:bullseye-slim
 
 # Install PHP and dependencies
 RUN apt-get update && \
-    apt-get install -y php-fpm php-mysql wordpress && \
+    apt-get install -y php-fpm php-mysql wordpress wget && \
     rm -rf /var/lib/apt/lists/* && \
 	mkdir -p /run/php && chown www-data:www-data /run/php
 
@@ -13,5 +13,9 @@ RUN sed -i 's/listen = \/run\/php\/php7.4-fpm.sock/listen = 9000/' /etc/php/7.4/
 # Expose port 9000 for PHP-FPM
 EXPOSE 9000
 
+# entrypoint.sh를 추가
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 # Start PHP-FPM
-CMD ["php-fpm7.4", "-F"]
+ENTRYPOINT ["/entrypoint.sh"]

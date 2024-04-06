@@ -16,6 +16,7 @@ services:
     volumes:
       - ./requirements/nginx/conf.d:/etc/nginx/conf.d
       - ./certs:/etc/nginx/certs:ro
+      - wordpress_data:/var/www/html
     depends_on:
       - wordpress
     networks:

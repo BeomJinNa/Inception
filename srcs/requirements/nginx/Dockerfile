@@ -15,8 +15,8 @@ RUN mkdir -p /etc/nginx/certs && \
 RUN ln -sf /dev/stdout /var/log/nginx/access.log \
     && ln -sf /dev/stderr /var/log/nginx/error.log
 
-# 포트 80, 443 열기
-EXPOSE 80 443
+# 포트 443 열기
+EXPOSE 443
 
 # NGINX 포그라운드 실행
 CMD ["nginx", "-g", "daemon off;"]

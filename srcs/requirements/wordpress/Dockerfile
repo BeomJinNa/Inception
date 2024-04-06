@@ -11,7 +11,7 @@ RUN apt-get update && \
 RUN sed -i 's/listen = \/run\/php\/php7.4-fpm.sock/listen = 9000/' /etc/php/7.4/fpm/pool.d/www.conf
 
 # Expose port 9000 for PHP-FPM
-EXPOSE 9000
+EXPOSE 3306 9000
 
 # entrypoint.sh를 추가
 COPY entrypoint.sh /entrypoint.sh

@@ -6,7 +6,17 @@ networks:
 
 volumes:
   wordpress_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /Users/bjin/data/wordpress #리눅스 환경에서는 변경 필요
+      o: bind
   mariadb_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /Users/bjin/data/mariadb #리눅스 환경에서는 변경 필요
+      o: bind
 
 services:
   nginx:

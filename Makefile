@@ -6,6 +6,11 @@ up:
 down:
 	docker-compose -f srcs/docker-compose.yml down
 
+.PHONY: vdown
+vdown:
+	docker-compose -f srcs/docker-compose.yml down -v
+	rm -rf /Users/bjin/data/wordpress/* /Users/bjin/data/mariadb/*
+
 .PHONY: build
 build:
 	docker-compose -f srcs/docker-compose.yml build
@@ -19,3 +24,10 @@ certs:
 .PHONY: iclean
 iclean:
 	docker rmi `docker images -aq` -f
+
+.PHONY: re
+re:
+	$(MAKE) vdown
+	$(MAKE) iclean
+	$(MAKE) build
+	$(MAKE) up

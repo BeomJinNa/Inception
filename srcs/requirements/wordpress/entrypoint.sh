@@ -34,7 +34,7 @@ define( 'NONCE_SALT',       getenv('NONCE_SALT') );
 
 \$table_prefix = 'wp_';
 
-define('WP_DEBUG', false);
+define('WP_DEBUG', true);
 
 if ( !defined('ABSPATH') )
     define('ABSPATH', dirname(__FILE__) . '/');
@@ -42,6 +42,14 @@ if ( !defined('ABSPATH') )
 require_once(ABSPATH . 'wp-settings.php');
 EOF
     chown www-data:www-data /var/www/html/wp-config.php
+fi
+
+if grep -q ';clear_env = no' /etc/php/7.4/fpm/pool.d/www.conf; then
+    sed -i 's/;clear_env = no/clear_env = no/' /etc/php/7.4/fpm/pool.d/www.conf
+elif grep -q ';clear_env = yes' /etc/php/7.4/fpm/pool.d/www.conf; then
+    sed -i 's/;clear_env = yes/clear_env = no/' /etc/php/7.4/fpm/pool.d/www.conf
+else
+    echo "clear_env = no" >> /etc/php/7.4/fpm/pool.d/www.conf
 fi
 
 # PHP-FPM 실행

@@ -42,6 +42,18 @@ if ( !defined('ABSPATH') )
 require_once(ABSPATH . 'wp-settings.php');
 EOF
     chown www-data:www-data /var/www/html/wp-config.php
+
+	# wp-cli 설치
+    curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+    chmod +x wp-cli.phar
+    mv wp-cli.phar /usr/local/bin/wp
+
+    # WordPress 초기 설정 및 관리자 계정 생성
+    cd /var/www/html
+	wp core install --url="${DOMAIN_NAME}" --title="${WP_TITLE}" --admin_user="${ADMIN_USER}" \
+		--admin_password="${ADMIN_PASSWORD}" --admin_email="${ADMIN_EMAIL}" --skip-email --allow-root
+    wp theme install twentynineteen --activate --allow-root
+    wp plugin install classic-editor --activate --allow-root
 fi
 
 if grep -q ';clear_env = no' /etc/php/7.4/fpm/pool.d/www.conf; then

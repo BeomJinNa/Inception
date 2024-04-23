@@ -3,7 +3,7 @@ FROM debian:bullseye-slim
 
 # Install PHP and dependencies
 RUN apt-get update && \
-    apt-get install -y php-fpm php-mysql wordpress wget && \
+    apt-get install -y php-fpm php-mysql wordpress wget curl && \
     rm -rf /var/lib/apt/lists/* && \
 	mkdir -p /run/php && chown www-data:www-data /run/php
 

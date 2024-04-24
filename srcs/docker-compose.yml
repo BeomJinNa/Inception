@@ -35,11 +35,16 @@ services:
   wordpress:
     build: ./requirements/wordpress
     environment:
-      WORDPRESS_DB_HOST: mariadb
-      WORDPRESS_DB_USER: ${MYSQL_USER}
-      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
-      WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
-      WP_TITLE: ${WORDPRESS_TITLE}
+      DOMAIN_NAME: ${DOMAIN_NAME}
+
+      WP_DB_HOST: mariadb
+      WP_DB_USER: ${MYSQL_USER}
+      WP_DB_PASSWORD: ${MYSQL_PASSWORD}
+      WP_DB_NAME: ${MYSQL_DATABASE}
+      WP_TITLE: ${WP_TITLE}
+      WP_THEME: ${WP_THEME}
+      WP_PLUGINS: ${WP_PLUGINS}
+
       AUTH_KEY: ${AUTH_KEY}
       SECURE_AUTH_KEY: ${SECURE_AUTH_KEY}
       LOGGED_IN_KEY: ${LOGGED_IN_KEY}
@@ -48,10 +53,15 @@ services:
       SECURE_AUTH_SALT: ${SECURE_AUTH_SALT}
       LOGGED_IN_SALT: ${LOGGED_IN_SALT}
       NONCE_SALT: ${NONCE_SALT}
-      DOMAIN_NAME: ${DOMAIN_NAME}
-      ADMIN_USER: ${ADMIN_USER}
-      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
-      ADMIN_EMAIL: ${ADMIN_EMAIL}
+
+      ADMIN_USER: ${WP_ADMIN_USER}
+      ADMIN_PASSWORD: ${WP_ADMIN_PASSWORD}
+      ADMIN_EMAIL: ${WP_ADMIN_EMAIL}
+
+      EXTRA_USER: ${EXTRA_USER}
+      EXTRA_USER_EMAIL: ${EXTRA_USER_EMAIL}
+      EXTRA_USER_PASSWORD: ${EXTRA_USER_PASSWORD}
+      EXTRA_USER_ROLE: ${EXTRA_USER_ROLE}
     volumes:
       - wordpress_data:/var/www/html
     depends_on:

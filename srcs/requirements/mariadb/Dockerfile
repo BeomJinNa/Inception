@@ -9,9 +9,6 @@ RUN apt-get update && \
 # MariaDB 설정 변경
 RUN sed -i 's/bind-address\s*=\s*127\.0\.0\.1/bind-address = 0.0.0.0/' /etc/mysql/mariadb.conf.d/50-server.cnf
 
-# 데이터베이스 초기화 스크립트 복사
-COPY setup.sql /setup.sql
-
 # MariaDB 데이터 디렉토리 소유권 변경
 RUN chown -R mysql:mysql /var/lib/mysql
 

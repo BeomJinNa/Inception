@@ -2,7 +2,8 @@
 FROM debian:bullseye-slim
 
 # 필요한 패키지 설치
-RUN apt-get update && apt-get install -y nginx openssl
+RUN apt-get update && apt-get install -y nginx openssl && \
+    rm -rf /var/lib/apt/lists/*
 
 # SSL 인증서 생성 (자체 서명)
 RUN mkdir -p /etc/nginx/certs && \

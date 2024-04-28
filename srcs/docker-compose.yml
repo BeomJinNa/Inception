@@ -1,49 +1,49 @@
-version: '3'
+version: '3'  # Docker Compose 파일 버전
 
 networks:
   mynetwork:
-    driver: bridge
+    driver: bridge  # 브리지 네트워크 드라이버 사용
 
 volumes:
   wordpress_data:
-    driver: local
+    driver: local  # 로컬 드라이버 사용
     driver_opts:
       type: none
-      device: /Users/bjin/data/wordpress #리눅스 환경에서는 변경 필요
-      o: bind
+      device: /Users/bjin/data/wordpress # 맥OS 경로, 리눅스 환경에서는 변경 필요
+      o: bind  # 호스트와 컨테이너 간의 바인드 마운트
   mariadb_data:
     driver: local
     driver_opts:
       type: none
-      device: /Users/bjin/data/mariadb #리눅스 환경에서는 변경 필요
-      o: bind
+      device: /Users/bjin/data/mariadb # 리눅스 환경에서 경로 변경 필요
+      o: bind  # 바인드 마운트
 
 services:
   nginx:
-    build: ./requirements/nginx
+    build: ./requirements/nginx  # NGINX Dockerfile 위치
     ports:
-      - "443:443"
+      - "443:443"  # 443 포트로 서비스 접근
     volumes:
-      - ./requirements/nginx/conf.d:/etc/nginx/conf.d
-      - ./certs:/etc/nginx/certs:ro
-      - wordpress_data:/var/www/html
+      - ./requirements/nginx/conf.d:/etc/nginx/conf.d  # NGINX 설정 파일
+      - ./certs:/etc/nginx/certs:ro  # SSL/TLS 인증서, 읽기 전용
+      - wordpress_data:/var/www/html  # 워드프레스 데이터 볼륨
     depends_on:
-      - wordpress
+      - wordpress  # 워드프레스 서비스에 의존성 설정
     networks:
-      - mynetwork
+      - mynetwork  # 사용할 네트워크
 
   wordpress:
     build: ./requirements/wordpress
     environment:
-      DOMAIN_NAME: ${DOMAIN_NAME}
+      DOMAIN_NAME: ${DOMAIN_NAME}  # 도메인 이름
 
-      WP_DB_HOST: mariadb
-      WP_DB_USER: ${MYSQL_USER}
-      WP_DB_PASSWORD: ${MYSQL_PASSWORD}
-      WP_DB_NAME: ${MYSQL_DATABASE}
-      WP_TITLE: ${WP_TITLE}
-      WP_THEME: ${WP_THEME}
-      WP_PLUGINS: ${WP_PLUGINS}
+      WP_DB_HOST: mariadb  # 데이터베이스 호스트
+      WP_DB_USER: ${MYSQL_USER}  # 데이터베이스 사용자
+      WP_DB_PASSWORD: ${MYSQL_PASSWORD}  # 데이터베이스 비밀번호
+      WP_DB_NAME: ${MYSQL_DATABASE}  # 데이터베이스 이름
+      WP_TITLE: ${WP_TITLE}  # 워드프레스 사이트 제목
+      WP_THEME: ${WP_THEME}  # 워드프레스 테마
+      WP_PLUGINS: ${WP_PLUGINS}  # 워드프레스 플러그인
 
       AUTH_KEY: ${AUTH_KEY}
       SECURE_AUTH_KEY: ${SECURE_AUTH_KEY}
@@ -54,29 +54,29 @@ services:
       LOGGED_IN_SALT: ${LOGGED_IN_SALT}
       NONCE_SALT: ${NONCE_SALT}
 
-      ADMIN_USER: ${WP_ADMIN_USER}
-      ADMIN_PASSWORD: ${WP_ADMIN_PASSWORD}
-      ADMIN_EMAIL: ${WP_ADMIN_EMAIL}
+      ADMIN_USER: ${WP_ADMIN_USER}  # 관리자 사용자
+      ADMIN_PASSWORD: ${WP_ADMIN_PASSWORD}  # 관리자 비밀번호
+      ADMIN_EMAIL: ${WP_ADMIN_EMAIL}  # 관리자 이메일
 
-      EXTRA_USER: ${EXTRA_USER}
-      EXTRA_USER_EMAIL: ${EXTRA_USER_EMAIL}
-      EXTRA_USER_PASSWORD: ${EXTRA_USER_PASSWORD}
-      EXTRA_USER_ROLE: ${EXTRA_USER_ROLE}
+      EXTRA_USER: ${EXTRA_USER}  # 추가 사용자
+      EXTRA_USER_EMAIL: ${EXTRA_USER_EMAIL}  # 추가 사용자 이메일
+      EXTRA_USER_PASSWORD: ${EXTRA_USER_PASSWORD}  # 추가 사용자 비밀번호
+      EXTRA_USER_ROLE: ${EXTRA_USER_ROLE}  # 추가 사용자 역할
     volumes:
       - wordpress_data:/var/www/html
     depends_on:
-      - mariadb
+      - mariadb  # MariaDB 서비스에 의존성 설정
     networks:
       - mynetwork
 
   mariadb:
     build: ./requirements/mariadb
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}  # MySQL 루트 비밀번호
+      MYSQL_DATABASE: ${MYSQL_DATABASE}  # 생성할 데이터베이스
+      MYSQL_USER: ${MYSQL_USER}  # 데이터베이스 사용자
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}  # 사용자 비밀번호
     volumes:
-      - mariadb_data:/var/lib/mysql
+      - mariadb_data:/var/lib/mysql  # MariaDB 데이터 볼륨
     networks:
       - mynetwork

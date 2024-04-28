@@ -1,19 +1,19 @@
 #!/bin/bash
 
-# 필요한 디렉토리 생성 및 권한 설정
+# 필요한 웹서버 디렉토리 생성 및 권한 설정
 mkdir -p /var/www/html
 chown -R www-data:www-data /var/www/html
 
-# 워드프레스 설치 여부 확인
+# wp-config.php 존재 여부 확인 및 조건부 실행
 if [ ! -f "/var/www/html/wp-config.php" ]; then
-    # 워드프레스 다운로드 및 압축 해제
+    # 워드프레스 최신 버전 다운로드 및 압축 해제
     cd /tmp
     wget https://wordpress.org/wordpress-6.5.2.tar.gz
     tar -xzf wordpress-6.5.2.tar.gz
     cp -a /tmp/wordpress/. /var/www/html/
     chown -R www-data:www-data /var/www/html
 
-    # wp-config.php 생성
+    # 환경변수를 사용하여 wp-config.php 파일 생성
     cat > /var/www/html/wp-config.php <<EOF
 <?php
 define( 'DB_NAME', getenv('WP_DB_NAME') );
@@ -43,21 +43,22 @@ require_once(ABSPATH . 'wp-settings.php');
 EOF
     chown www-data:www-data /var/www/html/wp-config.php
 
-	# WP-CLI를 사용하여 워드프레스 설치
+    # WP-CLI를 이용한 워드프레스 핵심 설치 및 설정
     wp core install --url="${DOMAIN_NAME}" --title="${WP_TITLE}" \
-	--admin_user="${ADMIN_USER}" --admin_password="${ADMIN_PASSWORD}" \
-	--admin_email="${ADMIN_EMAIL}" --path="/var/www/html" --allow-root
+    --admin_user="${ADMIN_USER}" --admin_password="${ADMIN_PASSWORD}" \
+    --admin_email="${ADMIN_EMAIL}" --path="/var/www/html" --allow-root
 
-    # WP-CLI를 사용하여 기본 테마 설정 또는 플러그인 설치 등
+    # 테마 활성화 및 플러그인 설치
     wp theme activate ${WP_THEME} --path="/var/www/html" --allow-root
     wp plugin install ${WP_PLUGINS} --activate --path="/var/www/html" --allow-root
 
-	# 일반 사용자 추가
-	wp user create ${EXTRA_USER} ${EXTRA_USER_EMAIL} \
+    # 추가 사용자 계정 생성
+    wp user create ${EXTRA_USER} ${EXTRA_USER_EMAIL} \
     --role=${EXTRA_USER_ROLE} --user_pass=${EXTRA_USER_PASSWORD} \
     --path="/var/www/html" --allow-root
 fi
 
+# PHP-FPM 환경 변수 클리어 설정 확인 및 조정
 if grep -q ';clear_env = no' /etc/php/7.4/fpm/pool.d/www.conf; then
     sed -i 's/;clear_env = no/clear_env = no/' /etc/php/7.4/fpm/pool.d/www.conf
 elif grep -q ';clear_env = yes' /etc/php/7.4/fpm/pool.d/www.conf; then
@@ -66,5 +67,5 @@ else
     echo "clear_env = no" >> /etc/php/7.4/fpm/pool.d/www.conf
 fi
 
-# PHP-FPM 실행
+# PHP-FPM 서비스 실행
 exec php-fpm7.4 -F
